@@ -1,16 +1,16 @@
 import WebGLCore from "../../../webGLCore";
-import WebGLGaussianBlur from "./webGLGaussianBlur";
-import { RenderFilter } from "../webGLRenderFilter";
-import WebGLSubtract from "../nonCompositeTextures/webGLSubtract";
-import WebGLBinaryThreshold from "../nonCompositeTextures/webGLBinaryThresholding";
+import CompositeShaderGaussianBlur from "./compositeShaderGaussianBlur";
+import { Shader } from "../shader";
+import ShaderSubtract from "../nonCompositeTextures/shaderSubtract";
+import ShaderBinaryThreshold from "../nonCompositeTextures/shaderBinaryThresholding";
 import FramebufferPair from "../../../framebuffer_textures/framebufferPair";
 import Framebuffer from "../../../framebuffer_textures/framebuffer";
 
-class WebGLDoG implements RenderFilter{
+class WebGLDoG implements Shader{
     private readonly wgl : WebGLCore;
-    private readonly binaryThreshold : WebGLBinaryThreshold;
-    private readonly gaussianBlur : WebGLGaussianBlur;
-    private readonly subtract : WebGLSubtract;
+    private readonly binaryThreshold : ShaderBinaryThreshold;
+    private readonly gaussianBlur : CompositeShaderGaussianBlur;
+    private readonly subtract : ShaderSubtract;
 
     private sigma : number;
     private scalar : number = 1.6;
@@ -19,9 +19,9 @@ class WebGLDoG implements RenderFilter{
     constructor (wgl : WebGLCore, sigma : number) {
         this.wgl = wgl;
         this.sigma = sigma;
-        this.binaryThreshold = new WebGLBinaryThreshold(this.wgl);
-        this.gaussianBlur = new WebGLGaussianBlur(this.wgl);
-        this.subtract = new WebGLSubtract(this.wgl);
+        this.binaryThreshold = new ShaderBinaryThreshold(this.wgl);
+        this.gaussianBlur = new CompositeShaderGaussianBlur(this.wgl);
+        this.subtract = new ShaderSubtract(this.wgl);
     }
 
     public setAttributes (sigma : number, threshold : number, scalar : number) {

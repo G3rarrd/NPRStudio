@@ -24,14 +24,12 @@ class PostProcessingVertexShader {
     public setGlobalUniforms (
         gl : WebGL2RenderingContext, 
         program : WebGLProgram, 
-        width : number,
-        height : number
+        textureWidth : number,
+        textureHeight : number
     ) {
             /* Setting the Post processing vertex uniforms based on the program */
-            if (!program) throw new Error("Failed to load program");
-
             const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
-            gl.uniform2f(resolutionLocation, width, height);
+            gl.uniform2f(resolutionLocation, textureWidth, textureHeight);
         }
 }
 

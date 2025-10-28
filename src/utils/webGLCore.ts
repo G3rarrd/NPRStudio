@@ -5,6 +5,7 @@ class WebGLCore {
     public vao : WebGLVertexArrayObject | null = null;
     public positionBuffer : WebGLBuffer | null = null;
     public texCoordBuffer : WebGLBuffer | null = null;
+    public programCache : Map<string, WebGLProgram> = new Map<string, WebGLProgram>(); 
 
     constructor (
         gl : WebGL2RenderingContext, 
@@ -44,11 +45,15 @@ class WebGLCore {
         fragmentCode : string,
         fragmentShaderName : string
     )  : WebGLProgram {
-        if (! this.gl ) throw new Error("Failed to discover gl");
-        
+
+        const key = vertexCode + fragmentCode;
+
+        const cached : WebGLProgram | undefined = this.programCache.get(key);
+        if (cached) return cached;
+
         const program = this.gl.createProgram();
         if (!program) throw new Error("Failed to create WebGL program");
-        
+
         const vertexShader = this.createShader('Vertex', this.gl.VERTEX_SHADER, vertexCode);
         const fragmentShader = this.createShader(fragmentShaderName, this.gl.FRAGMENT_SHADER, fragmentCode);
         
@@ -61,7 +66,10 @@ class WebGLCore {
 
         const success : boolean = this.gl.getProgramParameter(program, this.gl.LINK_STATUS);
 
-        if (success) return program;
+        if (success) {
+            this.programCache.set(key, program);
+            return program;
+        }
 
         const programInfoLog : string | null = this.gl.getProgramInfoLog(program);
 

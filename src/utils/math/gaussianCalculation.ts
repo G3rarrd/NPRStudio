@@ -1,10 +1,18 @@
 class GaussianCalculations {
+    private kernelCache : Map<string, number[]> = new Map<string, number[]>();
+
     private get1DGaussianFunction = (x: number, sigma: number) => {
         const eX: number = -((x * x) / (2 * sigma * sigma));
         return (1 / Math.sqrt(2 * Math.PI * sigma * sigma)) * Math.exp(eX);
     };
     
     public get1DGaussianKernel (kernelSize: number, sigma: number): number[] {
+        const kernelKey : string = `${kernelSize}-${sigma}`; 
+        if (this.kernelCache.has(kernelKey)) {
+            return this.kernelCache.get(kernelKey)!;
+        }
+
+        
         if (!(kernelSize % 2)) kernelSize++; // ensures the kernel is always odd in size
     
         const halfSize: number = Math.floor(kernelSize / 2);
@@ -20,6 +28,7 @@ class GaussianCalculations {
     
         // Normalize kernel Grid
         this.normalizeKernel(kernel1D, kernelSum);
+        this.kernelCache.set(kernelKey, kernel1D);
         return kernel1D;
     };
 

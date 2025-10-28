@@ -1,77 +1,49 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLRenderer from "../../../../../../utils/Scene/webGLRender";
-import WebGLAnisotropicKuwahara from "../../../../../../utils/ShaderCodes/postprocessingEffects/compositeTextures/webGLAnisotropicKuwahara";
-import WebGLCore from "../../../../../../utils/webGLCore";
-import WebGLCompileFilters from "../../../../../../utils/ShaderCodes/postprocessingEffects/webGLCompileFilters";
-import FramebufferPool from "../../../../../../utils/framebuffer_textures/framebufferPool";
+import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import { NodeAnisotropicKuwahara } from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeAnisotropicKuwahara";
 
 
 function useAnisotropicKuwahara () {
-    const {rendererRef, setSliderConfigs,setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
+    const {rendererRef, setSliderMap: setSliderConfigs,setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
     function handleAnisotropicKuwaharaClick () {
-        if (! rendererRef || ! rendererRef.current) return;
-        const filterName : string ="Anisotropic Kuwahara"; 
-        setFilterName(filterName);
-        setOpenFilterControl(() => true);
-        const renderer : WebGLRenderer = rendererRef.current;
-        const wgl : WebGLCore = rendererRef.current.wgl;
-        const compiledFilter : WebGLCompileFilters = rendererRef.current.compiledFilters;
-        const framebufferPool : FramebufferPool = rendererRef.current.framebufferPool;
+        if (!rendererRef || ! rendererRef.current) return;
         
-        const anisotropicKuwahara = new WebGLAnisotropicKuwahara(wgl, compiledFilter, framebufferPool);
-        setSliderConfigs([...anisotropicKuwahara.config]);
+        const filterName : string ="Anisotropic Kuwahara"; 
+        
+        setFilterName(filterName);
 
-        filterFuncRef.current = (configs) => {
-            let radius : number | undefined = configs.find(cfg => cfg.label === "Radius")?.value;
-            let hardness : number | undefined = configs.find(cfg => cfg.label === "Hardness")?.value;
-            let sharpness : number | undefined = configs.find(cfg => cfg.label === "Sharpness")?.value;
-            let zeta : number | undefined = configs.find(cfg => cfg.label === "Zeta")?.value;
-            let zeroCrossing : number | undefined = configs.find(cfg => cfg.label === "Angle")?.value;
-            let alpha : number | undefined = configs.find(cfg => cfg.label === "Alpha")?.value;
-            let sigma : number | undefined = configs.find(cfg => cfg.label === "Sigma C")?.value;
+        setOpenFilterControl(() => true);
 
-            if (radius === undefined) {
-                console.warn("Radius label was not found using initial value");
-                radius = 3;
+        const renderer = rendererRef.current;
+       
+        const graphPipeline : WebGLShaderGraph = new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
+        const inputNode : NodeInput  = graphPipeline.inputNode;
+        const anisotropicKuwaharaNode : NodeAnisotropicKuwahara = new NodeAnisotropicKuwahara(graphPipeline.generateId(), renderer.pool, renderer.wgl);
+
+        graphPipeline.addNode(anisotropicKuwaharaNode);
+        graphPipeline.connect(inputNode.outputSockets[0], anisotropicKuwaharaNode.inputSockets[0]);
+
+        setSliderConfigs({...anisotropicKuwaharaNode.sliderMap}); // Helps initiate the slider(s)
+
+        filterFuncRef.current = (sliders) => {
+            for (const [key, slider] of Object.entries(sliders)) {
+                anisotropicKuwaharaNode.sliderMap[key] = slider;
             }
 
-            if (hardness === undefined) {
-                console.warn("hardness label was not found using initial value");
-                hardness = 100;
-            }
-            if (sharpness === undefined) {
-                console.warn("Sharpness label was not found using initial value");
-                sharpness = 18;
-            }
+            anisotropicKuwaharaNode.updateUniformValues();
 
-            if (zeta === undefined) {
-                console.warn("zeta label was not found using initial value");
-                zeta = 2;
-            }
+            //
+            const postprocessedTexture : WebGLTexture | null =  graphPipeline.renderPass(renderer.textureWidth, renderer.textureHeight);
+            if (!postprocessedTexture) throw new Error("Anisotropic Kuwahara Texture could not be processed");
+            renderer.currentTexture = postprocessedTexture;
 
-            if (zeroCrossing === undefined) {
-                console.warn("Zero Crossing label was not found using initial value");
-                zeroCrossing = 0.01;
-            }
-
-            if (alpha === undefined) {
-                console.warn("Alpha label was not found using initial value");
-                alpha = 0.01;
-            }
-
-            if (sigma === undefined) {
-                console.warn("Sigma label was not found using initial value");
-                sigma = 0.01;
-            }
-
-            anisotropicKuwahara.setAttributes(radius, hardness, sharpness, zeta, zeroCrossing, alpha, sigma);
-            renderer.renderPipeline.addFilter(anisotropicKuwahara);
-            renderer.currentTexture = renderer.renderPipeline.renderPass(renderer.holdCurrentTexture);
+            
             renderer.renderScene();
         }
 
-        filterFuncRef.current(anisotropicKuwahara.config); // Applies on click
+        filterFuncRef.current(anisotropicKuwaharaNode.sliderMap); // Applies on click
     }
     return {handleAnisotropicKuwaharaClick};
 }

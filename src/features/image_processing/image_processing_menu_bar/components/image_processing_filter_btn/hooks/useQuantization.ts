@@ -1,37 +1,48 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLQuantization from "../../../../../../utils/ShaderCodes/postprocessingEffects/nonCompositeTextures/webGLQuantization";
+import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeQunatization from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeQuantization";
 
 function useQuantization () {
-    const {rendererRef, setSliderConfigs, setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
+    const {rendererRef, setSliderMap: setSliderConfigs, setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
     
-    function handleQuantizationClick() {
+    function handleQuantization() {
         if (!rendererRef || ! rendererRef.current) return;
         const filterName : string ="Quantization"; 
+        
         setFilterName(filterName);
+
         setOpenFilterControl(() => true);
 
-        const quantization : WebGLQuantization = rendererRef.current.compiledFilters.quantization;
         const renderer = rendererRef.current;
-        
-        setSliderConfigs([...quantization.config]); // Helps initiate the slider(s)
+       
+        const graphPipeline : WebGLShaderGraph = new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
+        const inputNode : NodeInput  = graphPipeline.inputNode;
+        const quantizationNode : NodeQunatization = new NodeQunatization(graphPipeline.generateId(), renderer.pool, renderer.wgl);
 
-        filterFuncRef.current = (config) => {
-            let colorCount = config.find(cfg => cfg.label === "Color Count")?.value;
-            
-            if (colorCount  === undefined || colorCount  === null)  {
-                console.warn("Color Count label was not found using initial value");
-                colorCount = 2;
+        graphPipeline.addNode(quantizationNode);
+        graphPipeline.connect(inputNode.outputSockets[0], quantizationNode.inputSockets[0]);
+
+        setSliderConfigs({...quantizationNode.sliderMap}); // Helps initiate the slider(s)
+
+        filterFuncRef.current = (sliders) => {
+            for (const [key, slider] of Object.entries(sliders)) {
+                quantizationNode.sliderMap[key] = slider;
             }
-            
-            quantization.setAttributes(colorCount);
-            renderer.renderPipeline.addFilter(quantization);
-            renderer.currentTexture = renderer.renderPipeline.renderPass(renderer.holdCurrentTexture);
+
+            quantizationNode.updateUniformValues();
+
+            const postprocessedTexture : WebGLTexture | null =  graphPipeline.renderPass(renderer.textureWidth, renderer.textureHeight);
+            if (!postprocessedTexture) throw new Error("Quantization Texture could not be processed");
+            renderer.currentTexture = postprocessedTexture;
+
             renderer.renderScene();
         }
 
-        filterFuncRef.current(quantization.config); // Applies on click
+        filterFuncRef.current(quantizationNode.sliderMap); // Applies on click
     }
-    return {handleQuantizationClick};
+
+    return { handleQuantization};
 }
 export default useQuantization;

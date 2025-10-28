@@ -3,8 +3,6 @@ import Texture from "../framebuffer_textures/texture";
 import { imgFragmentShaderCode } from '../ShaderCodes/postprocessingEffects/imgFragmentShader';
 import WebGLCore from "../webGLCore";
 import WebGL2DCamera from './webGL2DCamera';
-import WebGLCompileFilters from "../ShaderCodes/postprocessingEffects/webGLCompileFilters";
-import WebGLRenderPipeline from "./webGLRenderPipeline";
 import { cameraVertexShaderCode } from "../ShaderCodes/vertexShaders/cameraVertexShader";
 import FramebufferPool from '../framebuffer_textures/framebufferPool';
 import WebGLHistoryStack from "./webGLHistoryStack";
@@ -19,10 +17,11 @@ class WebGLRenderer {
     public currentTexture : WebGLTexture;
     public holdCurrentTexture: WebGLTexture;
     public tex : Texture;
-    public compiledFilters : WebGLCompileFilters;
-    public renderPipeline : WebGLRenderPipeline;
-    public framebufferPool : FramebufferPool;
+
+    public pool : FramebufferPool;
     public historyStack : WebGLHistoryStack;
+    public textureWidth : number;
+    public textureHeight : number;
 
     
     constructor(
@@ -30,24 +29,24 @@ class WebGLRenderer {
         camera : WebGL2DCamera,
         img : HTMLImageElement
     ) {
-        this.wgl = new WebGLCore(gl, gl.canvas.width, gl.canvas.height);
-        this.framebufferPool = new FramebufferPool(gl);
-        this.historyStack = new WebGLHistoryStack(this.wgl);
-        this.renderPipeline = new WebGLRenderPipeline(this.wgl, img, this.framebufferPool);
-        this.compiledFilters = new WebGLCompileFilters(this.wgl, this.framebufferPool);
-        this.compiledFilters.initAll();
-        
-        this.gl = gl;
-        this.cam = camera;
-        // this.flipY = 1;
         this.img = img;
+        this.textureWidth = img.naturalWidth;
+        this.textureHeight = img.naturalHeight;
+
+        this.wgl = new WebGLCore(gl, gl.canvas.width, gl.canvas.height);
+        this.pool = new FramebufferPool(gl);
+        this.historyStack = new WebGLHistoryStack(this.wgl);
+
+        this.gl = gl;
+
+        this.cam = camera;
+        
         this.tex = new Texture(gl);
         this.currentTexture = this.tex.createTextureFromImage(img);
         this.holdCurrentTexture = this.currentTexture;
         
         this.historyStack.add(this.currentTexture, this.img.naturalWidth, this.img.naturalHeight); // Ensures the 
         this.init();
-        this.renderPipeline.renderPass(this.currentTexture);
     }
 
     

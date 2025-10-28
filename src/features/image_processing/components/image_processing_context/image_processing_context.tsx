@@ -1,5 +1,6 @@
-import { RangeSlidersProps } from "../../../../types/slider";
+
 import WebGLRenderer from "../../../../utils/Scene/webGLRender";
+import { Slider } from "../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder";
 
 // type Dimensions = {width : number; height: number} | null;
 
@@ -13,15 +14,15 @@ export interface ImageProcessingContextProps {
     filterName : string;
     setFilterName : React.Dispatch<React.SetStateAction<string>>;
 
-    sliderConfigs : RangeSlidersProps[];
-    setSliderConfigs : React.Dispatch<React.SetStateAction<RangeSlidersProps[]>>;
+    sliderMap : Record<string, Slider>;
+    setSliderMap : React.Dispatch<React.SetStateAction<Record<string, Slider>>>;
     
     imageError : string | null;
     setImageError : (error : string | null) => void;
 
     glCanvasRef : React.MutableRefObject<HTMLCanvasElement | null>;
     rendererRef : React.MutableRefObject<WebGLRenderer | null>;
-    filterFuncRef : React.MutableRefObject<(configs: RangeSlidersProps[]) => void>;
+    filterFuncRef : React.MutableRefObject<(configs: Record<string, Slider>) => void>;
 }
 
 export const defaultValue : ImageProcessingContextProps = {
@@ -34,8 +35,8 @@ export const defaultValue : ImageProcessingContextProps = {
     filterName : '',
     setFilterName : () => {},
 
-    sliderConfigs : [],
-    setSliderConfigs : ()=> {},
+    sliderMap : {},
+    setSliderMap : ()=> {},
 
     imageError: null,
     setImageError : () => {},
@@ -44,6 +45,6 @@ export const defaultValue : ImageProcessingContextProps = {
     glCanvasRef :  { current: null },
     rendererRef :  { current: null },
     filterFuncRef : {
-        current: (configs: RangeSlidersProps[]) => {},
+        current: (configs: Record<string, Slider>) => {},
     } 
 }

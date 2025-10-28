@@ -1,7 +1,7 @@
 import { createContext, useState, ReactNode, useRef} from 'react';
 import { ImageProcessingContextProps, defaultValue } from './image_processing_context';
 import WebGLRenderer from '../../../../utils/Scene/webGLRender';
-import { RangeSlidersProps } from '../../../../types/slider';
+import { Slider } from '../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder';
 
 export const ImageProcessingContext : React.Context<ImageProcessingContextProps> = createContext<ImageProcessingContextProps>(defaultValue);
 
@@ -9,17 +9,17 @@ export const ImageProcessingProvider : React.FC<{children : ReactNode}> = ({chil
     const [src, setSrc] = useState<string | undefined>(defaultValue.src);
     const [openFilterControl,setOpenFilterControl] = useState<boolean>(false);
     const [imageError, setImageError] = useState<string | null>(null);
-    const [sliderConfigs, setSliderConfigs] = useState<RangeSlidersProps[]>([]);
+    const [sliderMap, setSliderMap] = useState<Record<string, Slider>>({});
     const [filterName, setFilterName] = useState<string>('');
 
     const glCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const rendererRef = useRef<WebGLRenderer | null>(null);
     
-    const filterFuncRef = useRef<(configs: RangeSlidersProps[]) => void>(() => {});
+    const filterFuncRef = useRef<(configs: Record<string, Slider>) => void>(() => {});
 
 
     const providerValue = {
-        setSrc, 
+        setSrc,
         src,
 
         filterName,
@@ -28,10 +28,10 @@ export const ImageProcessingProvider : React.FC<{children : ReactNode}> = ({chil
         openFilterControl,
         setOpenFilterControl,
 
-        sliderConfigs,
-        setSliderConfigs,
+        sliderMap,
+        setSliderMap,
 
-        imageError, 
+        imageError,
         setImageError, 
 
 

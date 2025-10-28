@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLGrayScale from "../../../../../../utils/ShaderCodes/postprocessingEffects/nonCompositeTextures/webGLGrayscale";
+import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeGrayscale from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeGrayscale";
 
 function useGrayscale () {
     const {rendererRef, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
@@ -8,17 +10,29 @@ function useGrayscale () {
     function handleGrayscale () {
         if (! rendererRef || !rendererRef.current) return;
         const filterName : string ="Grayscale"; 
+
         setFilterName(filterName);
+
         const renderer = rendererRef.current;
-        const grayscale : WebGLGrayScale =renderer.compiledFilters.grayScale;
-        // let currentTexture : WebGLTexture = renderer.currentTexture;
+
+        const graphPipeline : WebGLShaderGraph = new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
+
+        const inputNode : NodeInput = graphPipeline.inputNode;
+
+        const grayscaleNode : NodeGrayscale = new NodeGrayscale(graphPipeline.generateId(), renderer.pool, renderer.wgl);
+        graphPipeline.addNode(grayscaleNode);
+
+        graphPipeline.connect(inputNode.outputSockets[0], grayscaleNode.inputSockets[0]);
+        
+        const postprocessedTexture : WebGLTexture | null =  graphPipeline.renderPass(renderer.textureWidth, renderer.textureHeight);
+        
+        if (!postprocessedTexture) throw new Error("Grayscale Texture could not be processed");
+        
+        renderer.currentTexture = postprocessedTexture;
 
         filterFuncRef.current = () => {};
-        
-        renderer.renderPipeline.addFilter(grayscale);
-        renderer.currentTexture = renderer.renderPipeline.renderPass(renderer.holdCurrentTexture);
-        renderer.renderScene();
 
+        renderer.renderScene();
         
         const imgWidth = renderer.img.naturalWidth;
         const imgHeight = renderer.img.naturalHeight;

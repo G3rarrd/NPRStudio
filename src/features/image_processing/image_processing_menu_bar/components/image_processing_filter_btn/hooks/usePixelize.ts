@@ -1,36 +1,51 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLPixelize from "../../../../../../utils/ShaderCodes/postprocessingEffects/nonCompositeTextures/webGLPixelize";
+import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import { NodePixelize } from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodePixelize";
 
 function usePixelize () {
-    const {rendererRef, setSliderConfigs, setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
+    const {rendererRef, setSliderMap: setSliderConfigs, setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
     
     function handlePixelizeClick() {
         if (!rendererRef || ! rendererRef.current) return;
         const filterName : string ="Pixelize"; 
+        
         setFilterName(filterName);
+        
         setOpenFilterControl(() => true);
-
-        const pixelize : WebGLPixelize = rendererRef.current.compiledFilters.pixelize;
+        
         const renderer = rendererRef.current;
         
-        setSliderConfigs([...pixelize.config]); // Helps initiate the slider(s)
+        const graphPipeline : WebGLShaderGraph = new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
 
-        filterFuncRef.current = (config) => {
-            let blockSize : number | undefined = config.find(cfg => cfg.label === "Block Size")?.value;
-            
-            if (blockSize  === undefined)  {
-                console.warn("Block Size label was not found using initial value");
-                blockSize = 2;
+        const inputNode : NodeInput = graphPipeline.inputNode;
+        
+        const pixelizeNode : NodePixelize = new NodePixelize(graphPipeline.generateId(), renderer.pool, renderer.wgl);
+        
+        graphPipeline.addNode(pixelizeNode);
+
+        graphPipeline.connect(inputNode.outputSockets[0], pixelizeNode.inputSockets[0]);
+        
+        setSliderConfigs({...pixelizeNode.sliderMap}); // Helps initiate the slider(s)
+
+        filterFuncRef.current = (sliders) => {
+            for (const [key, slider] of Object.entries(sliders)) {
+                pixelizeNode.sliderMap[key] = slider;
             }
-            
-            pixelize.setAttributes(blockSize);
-            renderer.renderPipeline.addFilter(pixelize);
-            renderer.currentTexture = renderer.renderPipeline.renderPass(renderer.holdCurrentTexture);
+
+            pixelizeNode.updateUniformValues();
+
+            //
+            const postprocessedTexture : WebGLTexture | null =  graphPipeline.renderPass(renderer.textureWidth, renderer.textureHeight);
+            if (!postprocessedTexture) throw new Error("Pixelize Texture could not be processed");
+            renderer.currentTexture = postprocessedTexture;
+
             renderer.renderScene();
         }
 
-        filterFuncRef.current(pixelize.config); // Applies on click
+
+        filterFuncRef.current(pixelizeNode.sliderMap); // Applies on click
     }
     return {handlePixelizeClick};
 }

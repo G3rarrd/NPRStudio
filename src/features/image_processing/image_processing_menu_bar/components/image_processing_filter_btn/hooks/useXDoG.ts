@@ -1,81 +1,51 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLXDoG from "../../../../../../utils/ShaderCodes/postprocessingEffects/compositeTextures/webGLXDoG";
-import WebGLCore from "../../../../../../utils/webGLCore";
-import WebGLCompileFilters from "../../../../../../utils/ShaderCodes/postprocessingEffects/webGLCompileFilters";
-import FramebufferPool from "../../../../../../utils/framebuffer_textures/framebufferPool";
+import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeXDoG from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeXDoG";
 
 function useXDoG () {
-    const {rendererRef, filterFuncRef, setSliderConfigs, setOpenFilterControl, setFilterName} = useContext(ImageProcessingContext);
+    const {rendererRef, filterFuncRef, setSliderMap: setSliderConfigs, setOpenFilterControl, setFilterName} = useContext(ImageProcessingContext);
     
     function handleXDoGClick() {
         if (!rendererRef || ! rendererRef.current) return;
         
-        setOpenFilterControl(() => true);
-        const filterName : string ="xDoG"; 
+        const filterName : string ="XDoG"; 
+        
         setFilterName(filterName);
-        const wgl : WebGLCore = rendererRef.current.wgl;
-        const compiledFilter : WebGLCompileFilters = rendererRef.current.compiledFilters;
-        const framebufferPool : FramebufferPool = rendererRef.current.framebufferPool;
-        const xDoG : WebGLXDoG = new WebGLXDoG(wgl, framebufferPool,compiledFilter);
+
+        setOpenFilterControl(() => true);
 
         const renderer = rendererRef.current;
-        setSliderConfigs(() => [...xDoG.config]); // Helps initiate the slider(s)
-        filterFuncRef.current = (configs) => {
-            let sigmaE : number | undefined= configs.find(cfg => cfg.label === "Radius E")?.value;
-            let sigmaM : number | undefined= configs.find(cfg => cfg.label === "Radius M")?.value;
-            let sigmaA : number | undefined = configs.find(cfg => cfg.label === "Radius A")?.value;
-            let sigmaC : number | undefined = configs.find(cfg => cfg.label === "Radius C")?.value;
-            let tau : number | undefined= configs.find(cfg => cfg.label === "Tau")?.value;
-            let phi : number | undefined = configs.find(cfg => cfg.label === "Phi")?.value;
-            let epsilon : number | undefined= configs.find(cfg => cfg.label === "Epsilon")?.value;
+       
+        const graphPipeline : WebGLShaderGraph = new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
+        const inputNode : NodeInput  = graphPipeline.inputNode;
+        const xDoGNode : NodeXDoG = new NodeXDoG(graphPipeline.generateId(), renderer.pool, renderer.wgl);
 
+        graphPipeline.addNode(xDoGNode);
+        graphPipeline.connect(inputNode.outputSockets[0], xDoGNode.inputSockets[0]);
 
-            if (sigmaE === undefined ) {
-                console.warn("Radius E label was not found using initial value");
-                sigmaE = 1.6;
+        setSliderConfigs({...xDoGNode.sliderMap}); // Helps initiate the slider(s)
+
+        filterFuncRef.current = (sliders) => {
+            for (const [key, slider] of Object.entries(sliders)) {
+                xDoGNode.sliderMap[key] = slider;
             }
 
-            if (sigmaM === undefined ) {
-                console.warn("Radius M label was not found using initial value");
-                sigmaM = 1.6;
-            }
+            xDoGNode.updateUniformValues();
 
-            if (sigmaA === undefined ) {
-                console.warn("Radius A label was not found using initial value");
-                sigmaA = 1.6;
-            }
-
-            if (sigmaC === undefined ) {
-                console.warn("Radius C label was not found using initial value");
-                sigmaC = 1.6;
-            }
-
-            if (tau === undefined ) {
-                console.warn("Tau label was not found using initial value");
-                tau = 10.6;
-            }
-            if (phi === undefined ) {
-                console.warn("Phi label was not found using initial value");
-                phi = 1.6;
-            }
-            if (epsilon === undefined ) {
-                console.warn("Epsilon label was not found using initial value");
-                epsilon = 0.8;
-            }
-
+            //
+            const postprocessedTexture : WebGLTexture | null =  graphPipeline.renderPass(renderer.textureWidth, renderer.textureHeight);
+            if (!postprocessedTexture) throw new Error("XDoG Texture could not be processed");
+            renderer.currentTexture = postprocessedTexture;
 
             
-            xDoG.setAttributes(sigmaC, sigmaE,sigmaM, sigmaA, tau, phi, epsilon) ;
-            renderer.renderPipeline.addFilter(xDoG);
-            renderer.currentTexture = renderer.renderPipeline.renderPass(renderer.holdCurrentTexture);
             renderer.renderScene();
         }
 
-        filterFuncRef.current(xDoG.config); // Applies on click
-
-        
+        filterFuncRef.current(xDoGNode.sliderMap); // Applies on click   
     }
+
     return {handleXDoGClick};
 }
 export default useXDoG;

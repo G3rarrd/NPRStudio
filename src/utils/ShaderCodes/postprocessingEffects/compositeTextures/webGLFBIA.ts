@@ -1,20 +1,20 @@
 import FramebufferPair from "../../../framebuffer_textures/framebufferPair";
 import FramebufferPool from '../../../framebuffer_textures/framebufferPool';
 import WebGLCore from "../../../webGLCore";
-import { RenderFilter } from "../webGLRenderFilter";
-import WebGLFBL from "./WebGLFBL";
-import WebGLCoherentLineDrawing from "./webGLCoherentLineDrawing";
-import WebGLSuperImpose from "../nonCompositeTextures/webGLSuperImpose";
+import { Shader } from "../shader";
+import CompositeShaderFBL from "./compositeShaderFBL";
+import CompositeShaderCoherentLineDrawing from "./compositeShaderCoherentLineDrawing";
+import ShaderSuperImpose from "../nonCompositeTextures/shaderSuperImpose";
 import Framebuffer from "../../../framebuffer_textures/framebuffer";
-import WebGLCompileFilters from "../webGLCompileFilters";
+import FilterFactory from "../filterFactory";
 import { RangeSlidersProps } from "../../../../types/slider";
 
-class WebGLFBIA implements RenderFilter{
+class WebGLFBIA implements Shader{
     private readonly wgl : WebGLCore;
-    private readonly fdog : WebGLCoherentLineDrawing;
-    private readonly fbl : WebGLFBL;
+    private readonly fdog : CompositeShaderCoherentLineDrawing;
+    private readonly fbl : CompositeShaderFBL;
     private readonly framebufferPool : FramebufferPool;
-    private readonly compiledFilters : WebGLCompileFilters;
+    private readonly compiledFilters : FilterFactory;
 
     // FBL Attributes
     private iterationFBL : number = 1.0; 
@@ -41,13 +41,13 @@ class WebGLFBIA implements RenderFilter{
     constructor (
         wgl:WebGLCore, 
         framebufferPool : FramebufferPool, 
-        compiledFilters : WebGLCompileFilters
+        compiledFilters : FilterFactory
     ) {
         this.wgl = wgl;
         this.framebufferPool = framebufferPool;
         this.compiledFilters = compiledFilters ;
-        this.fdog = new WebGLCoherentLineDrawing(this.wgl, this.framebufferPool, compiledFilters);
-        this.fbl = new WebGLFBL(this.wgl, this.framebufferPool, compiledFilters);
+        this.fdog = new CompositeShaderCoherentLineDrawing(this.wgl, this.framebufferPool, compiledFilters);
+        this.fbl = new CompositeShaderFBL(this.wgl, this.framebufferPool, compiledFilters);
     
         this.config = [
             {min: 0.01, max: 60, step : 0.001, value: this.sigmaS, label: "Radius E"},
@@ -105,11 +105,11 @@ class WebGLFBIA implements RenderFilter{
         const fboFDoG = this.framebufferPool.acquire(fboWrite.width, fboRead.height);
         
         const pairFDoG = new FramebufferPair(fboWrite, fboFDoG);
-        this.fdog.setAttributes(this.sigmaC, this.sigmaM, this.etfKernelSizeFDoG, this.tau, this.p, this.iterationFDoG);
+        this.fdog.setUniformValues(this.sigmaC, this.sigmaM, this.etfKernelSizeFDoG, this.tau, this.p, this.iterationFDoG);
         const fdogTexture = this.fdog.render([inputTextures[0]],pairFDoG);
 
         const pairFBL = new FramebufferPair(pairFDoG.write(), fboRead);
-        this.fbl.setAttributes(this.etfKernelSizeFBL, this.sigmaE, this.sigmaG, this.rangeSigmaE, this.rangeSigmaG, this.iterationFBL, this.colorCount, this.spreadValue);
+        this.fbl.setUniformValues(this.etfKernelSizeFBL, this.sigmaE, this.sigmaG, this.rangeSigmaE, this.rangeSigmaG, this.iterationFBL, this.colorCount, this.spreadValue);
         const fblTexture = this.fbl.render([inputTextures[0]], pairFBL);
         
         // Must still do some experiments regarding the superImpose class cause the frame buffer management right now is all over the place

@@ -1,58 +1,48 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLRenderer from "../../../../../../utils/Scene/webGLRender";
-import WebGLGeneralizedKuwahara from "../../../../../../utils/ShaderCodes/postprocessingEffects/nonCompositeTextures/webGLGeneralizedKuwahara";
+import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeGeneralizedKuwahara from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeGeneralizedKuwahara";
 
 function useGeneralizedKuwahara () {
-    const {rendererRef, setSliderConfigs,setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
+    const {rendererRef, setSliderMap: setSliderConfigs,setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
     function handleGeneralizedKuwaharaClick () {
-        if (! rendererRef || ! rendererRef.current) return;
+        if (!rendererRef || ! rendererRef.current) return;
+        
         const filterName : string ="Generalized Kuwahara"; 
+        
         setFilterName(filterName);
+
         setOpenFilterControl(() => true);
-        
-        const renderer : WebGLRenderer = rendererRef.current;
-        const gerneralizedKuwahara : WebGLGeneralizedKuwahara = renderer.compiledFilters.generalizedKuwahara;
-        setSliderConfigs([...gerneralizedKuwahara.config]);
 
-        filterFuncRef.current = (configs) => {
-            let radius : number | undefined = configs.find(cfg => cfg.label === "Radius")?.value;
-            let hardness : number | undefined = configs.find(cfg => cfg.label === "Hardness")?.value;
-            let sharpness : number | undefined = configs.find(cfg => cfg.label === "Sharpness")?.value;
-            let zeta : number | undefined = configs.find(cfg => cfg.label === "Zeta")?.value;
-            let angle : number | undefined = configs.find(cfg => cfg.label === "Angle")?.value;
-        
-            if (radius === undefined) {
-                console.warn("Radius label was not found using initial value");
-                radius = 3;
+        const renderer = rendererRef.current;
+       
+        const graphPipeline : WebGLShaderGraph = new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
+        const inputNode : NodeInput  = graphPipeline.inputNode;
+        const generalizedKuwaharaNode : NodeGeneralizedKuwahara = new NodeGeneralizedKuwahara(graphPipeline.generateId(), renderer.pool, renderer.wgl);
+
+        graphPipeline.addNode(generalizedKuwaharaNode);
+        graphPipeline.connect(inputNode.outputSockets[0], generalizedKuwaharaNode.inputSockets[0]);
+
+        setSliderConfigs({...generalizedKuwaharaNode.sliderMap}); // Helps initiate the slider(s)
+
+        filterFuncRef.current = (sliders) => {
+            for (const [key, slider] of Object.entries(sliders)) {
+                generalizedKuwaharaNode.sliderMap[key] = slider;
             }
 
-            if (hardness === undefined) {
-                console.warn("hardness label was not found using initial value");
-                hardness = 100;
-            }
-            if (sharpness === undefined) {
-                console.warn("sharpness label was not found using initial value");
-                sharpness = 18;
-            }
+            generalizedKuwaharaNode.updateUniformValues();
 
-            if (zeta === undefined) {
-                console.warn("zeta label was not found using initial value");
-                zeta = 2;
-            }
+            //
+            const postprocessedTexture : WebGLTexture | null =  graphPipeline.renderPass(renderer.textureWidth, renderer.textureHeight);
+            if (!postprocessedTexture) throw new Error("Generalized Kuwahara Texture could not be processed");
+            renderer.currentTexture = postprocessedTexture;
 
-            if (angle === undefined) {
-                console.warn("Angle label was not found using initial value");
-                angle = 0.01;
-            }
-
-            gerneralizedKuwahara.setAttributes(radius, hardness, sharpness, zeta, angle);
-            renderer.renderPipeline.addFilter(gerneralizedKuwahara);
-            renderer.currentTexture = renderer.renderPipeline.renderPass(renderer.holdCurrentTexture);
+            
             renderer.renderScene();
         }
 
-        filterFuncRef.current(gerneralizedKuwahara.config); // Applies on click
+        filterFuncRef.current(generalizedKuwaharaNode.sliderMap); // Applies on click
     }
     return {handleGeneralizedKuwaharaClick};
 }

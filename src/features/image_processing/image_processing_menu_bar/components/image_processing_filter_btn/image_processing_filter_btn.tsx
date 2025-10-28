@@ -17,6 +17,7 @@ import useKuwahara from './hooks/useKuwahara';
 import useGeneralizedKuwahara from './hooks/useGeneralizedKuwahara';
 import useAnisotropicKuwahara from './hooks/useAnisotropicKuwahara';
 import baseStyles from '../image_processing_menu_btns_base.module.css';
+import useLuminanceQuantization from './hooks/useLuminanceQuantization';
 // import styles from './image_processing_filter_btn.module.css';
 function ImageProcessingFilterBtn() {
     const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +29,8 @@ function ImageProcessingFilterBtn() {
     const {handleSobel} = useSobel();
     const {handleSharpen} = useSharpen();
     const {handleEmbossClick} = useEmboss();
-    const {handleQuantizationClick} = useQuantization();
+    const {handleQuantization} = useQuantization();
+    const {handleLuminanceQuantizationClick} = useLuminanceQuantization();
     const {handleDithering} = useDithering();
     const {handleBinaryThresholdClick} = useBinaryThreshold();
     const {handlePixelizeClick} = usePixelize();
@@ -46,7 +48,8 @@ function ImageProcessingFilterBtn() {
         { filter: 'Sobel', handler: handleSobel },
         { filter: 'Sharpen', handler: handleSharpen },
         { filter: 'Emboss', handler: handleEmbossClick },
-        { filter: 'Quantization', handler: handleQuantizationClick },
+        { filter: 'Quantization', handler: handleQuantization},
+        { filter: 'Luminance Quantization', handler: handleLuminanceQuantizationClick },
         { filter: 'Dithering', handler: handleDithering },
         { filter: 'Binary Threshold', handler: handleBinaryThresholdClick },
         { filter: 'Pixelize', handler: handlePixelizeClick },

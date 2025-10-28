@@ -1,44 +1,49 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLGaussianBlur from "../../../../../../utils/ShaderCodes/postprocessingEffects/compositeTextures/webGLGaussianBlur";
-import WebGLCore from "../../../../../../utils/webGLCore";
-import WebGLCompileFilters from "../../../../../../utils/ShaderCodes/postprocessingEffects/webGLCompileFilters";
-import FramebufferPool from '../../../../../../utils/framebuffer_textures/framebufferPool';
+import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeGaussianBlur from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeGaussianBlur";
 
 function useGaussianBlur () {
-    const {setSliderConfigs, setOpenFilterControl, rendererRef, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
+    const {rendererRef, setSliderMap: setSliderConfigs, setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);
     
-    function handleGaussianBlurClick () {
-        if (!rendererRef || !rendererRef.current) return;
+    function handleGaussianBlurClick() {
+        if (!rendererRef || ! rendererRef.current) return;
+        
         const filterName : string ="Gaussian Blur"; 
+        
         setFilterName(filterName);
+
         setOpenFilterControl(() => true);
 
         const renderer = rendererRef.current;
-        const wgl : WebGLCore = renderer.wgl;
-        const compiledFilter : WebGLCompileFilters = renderer.compiledFilters;
-        const framebufferPool : FramebufferPool = renderer.framebufferPool;
-        const gaussianBlur : WebGLGaussianBlur = new WebGLGaussianBlur(wgl, compiledFilter,framebufferPool);
+       
+        const graphPipeline : WebGLShaderGraph = new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
+        const inputNode : NodeInput  = graphPipeline.inputNode;
+        const gaussianBlurNode : NodeGaussianBlur = new NodeGaussianBlur(graphPipeline.generateId(), renderer.pool, renderer.wgl);
 
-        setSliderConfigs([...gaussianBlur.config]);
+        graphPipeline.addNode(gaussianBlurNode);
+        graphPipeline.connect(inputNode.outputSockets[0], gaussianBlurNode.inputSockets[0]);
 
-        filterFuncRef.current = (configs) => {
-            let radius : number | undefined = configs.find(cfg => cfg.label === 'Radius')?.value;
+        setSliderConfigs({...gaussianBlurNode.sliderMap}); // Helps initiate the slider(s)
 
-            if (radius === undefined) {
-                console.warn("Radius label is not found was not found initial value is currently used");
-                radius = 1.6;
+        filterFuncRef.current = (sliders) => {
+            for (const [key, slider] of Object.entries(sliders)) {
+                gaussianBlurNode.sliderMap[key] = slider;
             }
 
-            gaussianBlur.setAttributes(radius);
-            renderer.renderPipeline.addFilter(gaussianBlur);
-            renderer.currentTexture = renderer.renderPipeline.renderPass(renderer.holdCurrentTexture);
+            gaussianBlurNode.updateUniformValues();
+
+            const postprocessedTexture : WebGLTexture | null =  graphPipeline.renderPass(renderer.textureWidth, renderer.textureHeight);
+            if (!postprocessedTexture) throw new Error("Gaussian Blur Texture could not be processed");
+            renderer.currentTexture = postprocessedTexture;
+
             renderer.renderScene();
         }
 
-        filterFuncRef.current(gaussianBlur.config);
+        filterFuncRef.current(gaussianBlurNode.sliderMap); // Applies on click
     }
+
     return {handleGaussianBlurClick};
 }
-
 export default useGaussianBlur;

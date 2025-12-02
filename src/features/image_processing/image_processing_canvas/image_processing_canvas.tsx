@@ -1,4 +1,4 @@
-import React, { useContext} from 'react';
+import React, { useContext, useEffect} from 'react';
 import { ImageProcessingContext } from '../components/image_processing_context/image_processing_provider';
 
 import './image_processing_canvas.css';
@@ -13,14 +13,25 @@ const ImageProcessingCanvas = () => {
     const {handleWheel, handleMouseDown, handleMouseUp, handleMouseMove} = useWebGL2DScene();
     // const [scale, setScale] = useState<number>(1);
     // const [errorText, setErrorText] = useState<string>('');
+    useEffect(() => {
+        const canvas = glCanvasRef.current;
+        if (!canvas) return;
 
+        const handler = (e: WheelEvent) => {
+            e.preventDefault();      
+        };
 
+        canvas.addEventListener("wheel", handler, { passive: false });
 
-
+        return () => {
+            canvas.removeEventListener("wheel", handler);
+        };
+        }, []);
     return (
     <>
         {/* <canvas onClick={downloadCanvas} className="image_processing_canvas" ref={srcCanvasRef}></canvas> */}
-        <canvas className="image_processing_webgl" 
+        <div className='image_processing_canvas_container'>
+            <canvas className="image_processing_webgl" 
             ref={glCanvasRef} 
             onWheel={(e: React.WheelEvent<HTMLCanvasElement>) => handleWheel(e)}
             onMouseDown={(e: React.WheelEvent<HTMLCanvasElement>) => handleMouseDown(e)}
@@ -29,6 +40,8 @@ const ImageProcessingCanvas = () => {
         >
 
         </canvas>
+        </div>
+        
     </>
     );
 }

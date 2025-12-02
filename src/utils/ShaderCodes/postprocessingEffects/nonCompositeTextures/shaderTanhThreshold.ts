@@ -76,7 +76,7 @@ class ShaderTanhThreshold implements Shader {
                 finalColor = 1.0;
             }
             
-            threshold = vec4(vec3(finalColor), 1.0);
+            threshold = vec4(vec3(finalColor), color.a);
         }`
 }
 

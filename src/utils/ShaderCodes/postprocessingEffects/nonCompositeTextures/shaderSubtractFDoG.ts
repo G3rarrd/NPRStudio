@@ -69,7 +69,7 @@ class ShaderSubtractFDoG implements Shader{
 
             vec3 subtract = vec3(color1) - (u_p * vec3(color2)) ;
 
-            dog = vec4(subtract, 1.0);
+            dog = vec4(subtract, color1.a);
         }`
 }
 

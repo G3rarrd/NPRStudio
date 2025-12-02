@@ -247,8 +247,8 @@ class shaderAnisotropicKuwaharaPass implements Shader {
             float w = 1.0 / (1.0 + pow(hardnessScale * sigma2, 0.5 * u_sharpness));
             finalColor += vec4(m[k].rgb * w, w);
         }
-
-        outColor = clamp((finalColor / finalColor.a), 0.0, 1.0);
+        float alphaColor = texture(u_image, v_texCoord).a;
+        outColor = clamp((finalColor / finalColor.a), 0.0, alphaColor);
     }
     `
 }

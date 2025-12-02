@@ -70,10 +70,12 @@ class ShaderXDoGSubtract implements Shader {
     void main () {
         vec3 color1 = texture(u_image_1, v_texCoord).rgb;
         vec3 color2 = texture(u_image_2, v_texCoord).rgb;
+        float alphaColor = texture(u_image_1, v_texCoord).a;
+        
 
         float difference = ((1.0 + u_tau) * color1.r) - (u_tau * color2.r);
 
-        outColor = vec4(vec3(difference), 1.0);
+        outColor = vec4(vec3(difference), alphaColor);
     }`
 }
 

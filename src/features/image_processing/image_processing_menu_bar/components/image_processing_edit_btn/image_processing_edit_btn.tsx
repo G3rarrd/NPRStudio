@@ -1,15 +1,20 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 
 import baseStyles from '../image_processing_menu_btns_base.module.css';
 import useEditShortcuts from "./hooks/useEditShortCuts";
 import { useDropdownExit } from "../../hooks/useDropdownExit";
+import { ImageProcessingContext } from "../../../components/image_processing_context/image_processing_provider";
 function ImageProcessingEditBtn () {
     const {handleRedo, handleUndo} = useEditShortcuts(); 
     const dropdownRef = useRef<HTMLDivElement | null>(null);
     const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+    const {sliderMap} = useContext(ImageProcessingContext)
 
     function handleDropdownClick () {
-        setOpenDropdown(prev => !prev);
+        const sliderCount : number = Object.entries(sliderMap).length;
+        if (sliderCount < 1){
+            setOpenDropdown(prev => !prev);
+        }
     }
 
     const editOptions = [

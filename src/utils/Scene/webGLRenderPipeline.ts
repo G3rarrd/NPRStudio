@@ -1,3 +1,5 @@
+`Irrelevant for now might still be needed`
+
 // import WebGLCore from "../webGLCore";
 // import { RenderFilter } from '../ShaderCodes/postprocessingEffects/webGLRenderFilter';
 // import FramebufferPool from '../framebuffer_textures/framebufferPool';

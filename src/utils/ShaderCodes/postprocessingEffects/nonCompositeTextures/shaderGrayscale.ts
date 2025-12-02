@@ -58,7 +58,7 @@ class ShaderGrayScale implements Shader{
         vec3 weights = vec3(0.21, 0.72, 0.07);
 
         float luminance = dot(color.rgb, weights);
-        outColor0 = vec4(vec3(luminance), 1.0);
+        outColor0 = vec4(vec3(luminance), color.a);
     }`
 }
 export default ShaderGrayScale;

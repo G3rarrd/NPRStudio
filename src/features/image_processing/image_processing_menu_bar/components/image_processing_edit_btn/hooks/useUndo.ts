@@ -2,9 +2,10 @@ import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
 
 function useUndo() {
-    const {rendererRef} = useContext(ImageProcessingContext);
+    const {rendererRef, sliderMap} = useContext(ImageProcessingContext);
     function handleUndo () {
-        if (! rendererRef || ! rendererRef.current) return;
+        const sliderCount : number = Object.entries(sliderMap).length;
+        if (! rendererRef || ! rendererRef.current || sliderCount > 0) return;
         
         rendererRef.current.holdCurrentTexture = rendererRef.current.historyStack.undo();
         rendererRef.current.currentTexture = rendererRef.current.holdCurrentTexture;

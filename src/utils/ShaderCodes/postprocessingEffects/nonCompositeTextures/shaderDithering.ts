@@ -109,7 +109,7 @@ class ShaderDithering implements Shader {
 
     void main() {
         ivec2 texDimensions = textureSize(u_image, 0);
-        vec3 color = texture(u_image, v_texCoord).rgb;
+        vec4 color = texture(u_image, v_texCoord);
         vec3 newColor = vec3(0.0);
 
         float width = float(texDimensions.x);
@@ -126,11 +126,11 @@ class ShaderDithering implements Shader {
         float mSize = float(u_bayer_size*u_bayer_size);
         float noise = ((M * (1.0 / mSize)) - 0.5) * u_spread_value;
 
-        vec3 ditheredColor = color + vec3(noise);
+        vec3 ditheredColor = color.rgb + vec3(noise);
 
-        newColor = color + vec3(noise);
+        newColor = color.rgb + vec3(noise);
 
-        outColor0 = vec4(newColor, 1.0);
+        outColor0 = vec4(newColor, color.a);
     }`;
 }
 

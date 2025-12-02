@@ -96,6 +96,7 @@ class ShaderEdgeBlurPass implements Shader {
             vec2 onePixel = vec2(1.0) / vec2(textureSize(u_image, 0));
 
             vec2 vector =  texture(u_flow_map, v_texCoord).rg;
+            float alphaColor = texture(u_image, v_texCoord).a;
             float len = length(vector);
             if (len < 1e-4) {
                 vector = vec2(1.0, 0.0); // default direction (e.g., horizontal)
@@ -119,7 +120,7 @@ class ShaderEdgeBlurPass implements Shader {
                 }
             }
             
-            outColor = vec4(vec3(result), 1.0);
+            outColor = vec4(vec3(result), alphaColor);
         }`;
 }
 

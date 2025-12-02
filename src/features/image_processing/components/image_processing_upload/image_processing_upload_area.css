@@ -1,0 +1,78 @@
+.imgIcon{
+    width : 20%;
+}
+
+.image_upload_container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    /* place-items: center; */
+    height: 100%; 
+    width: 100%;
+    /* max-width: 50rem; */
+    background-color: var(--color-black-2); /* Variable found in index.css */
+}
+
+.image_upload_div{
+    position: relative;
+    max-width: 50rem;
+    margin: 5rem;
+    /* height: 100%; */
+    aspect-ratio: 16/9;
+
+    background-color: var(--color-black) /* Variable found in index.css */;
+
+    color : var(--secondary-color);/* Variable found in index.css */;
+    font-weight: 600;
+    font-size: 1.75rem;
+
+    border-style: dashed;
+    border-color:var(--secondary-color);/* Variable found in index.css */;
+    border-radius: .75rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    outline: 3rem solid var(--color-black) /* Variable found in index.css */;
+
+    cursor: pointer;
+}
+
+.uploaded_img_div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background-color: white; */
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    zoom:3.0;
+}
+
+.browseBtn {
+    /* color: blue; */
+    
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.browseBtn:hover{
+    color: var( --primary-color); /* Variable found in index.css */
+}
+
+.upload_downLoad_btn_area {
+    position: relative;
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+

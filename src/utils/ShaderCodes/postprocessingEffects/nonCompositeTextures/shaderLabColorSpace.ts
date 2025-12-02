@@ -95,7 +95,7 @@ class ShaderLabColorSpace implements Shader{
          vec3 lab = rgbToLab(color.rgb);
 
         
-        outColor0 = vec4(lab.x, lab.y, lab.z, 1.0);
+        outColor0 = vec4(lab.x, lab.y, lab.z, color.a);
     }`
 }
 export default ShaderLabColorSpace;

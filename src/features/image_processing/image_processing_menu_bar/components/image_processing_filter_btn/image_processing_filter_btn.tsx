@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import useGrayscale from './hooks/useGrayscale';
 import useInvert from './hooks/useInvert';
 import useSobel from './hooks/useSobel';
@@ -18,10 +18,13 @@ import useGeneralizedKuwahara from './hooks/useGeneralizedKuwahara';
 import useAnisotropicKuwahara from './hooks/useAnisotropicKuwahara';
 import baseStyles from '../image_processing_menu_btns_base.module.css';
 import useLuminanceQuantization from './hooks/useLuminanceQuantization';
+import { ImageProcessingContext } from '../../../components/image_processing_context/image_processing_provider';
 // import styles from './image_processing_filter_btn.module.css';
 function ImageProcessingFilterBtn() {
     const dropdownRef = useRef<HTMLDivElement | null>(null);
     const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+    const {sliderMap} = useContext(ImageProcessingContext)
+
 
 
     const {handleGrayscale} = useGrayscale();
@@ -63,7 +66,10 @@ function ImageProcessingFilterBtn() {
     ];
 
     function handleDropdownClick () {
-        setOpenDropdown(prev => !prev);
+        const sliderCount : number =  Object.entries(sliderMap).length;
+        if ( sliderCount < 1){
+            setOpenDropdown(prev => !prev);
+        }
     }
 
     useDropdownExit(dropdownRef, () => setOpenDropdown(false));

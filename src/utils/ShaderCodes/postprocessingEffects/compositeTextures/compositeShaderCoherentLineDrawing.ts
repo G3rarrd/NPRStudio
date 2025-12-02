@@ -1,6 +1,6 @@
 import WebGLCore from "../../../webGLCore";
 import CompositeShaderEdgeTangentFlow from "./CompositeShaderETF";
-import ShaderGrayScale, { grayscaleOutputTexture } from "../nonCompositeTextures/shaderGrayscale";
+import ShaderGrayScale from "../nonCompositeTextures/shaderGrayscale";
 import FramebufferPool from '../../../framebuffer_textures/framebufferPool';
 import Framebuffer from "../../../framebuffer_textures/framebuffer";
 import ShaderEdgeBlurPass, { edgeBlurOutputTextureIndex } from "../nonCompositeTextures/shaderEdgeBlur";

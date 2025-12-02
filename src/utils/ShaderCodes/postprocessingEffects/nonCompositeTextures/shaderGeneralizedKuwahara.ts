@@ -174,7 +174,9 @@ class ShaderGeneralizedKuwahara {
             finalColor += vec4(m[k].rgb * w, w);
         }
 
-        outColor = clamp((finalColor / finalColor.a), 0.0, 1.0);
+        float alphaColor = texture(u_image, v_texCoord).a;
+
+        outColor = clamp((finalColor / finalColor.a), 0.0, alphaColor);
     }`
 }
 

@@ -110,7 +110,7 @@ class ShaderKuwahara implements Shader {
             minColor = bottomRightColor.rgb;
         }
 
-        outColor0 = vec4(minColor, 1.0);
+        outColor0 = vec4(minColor,  pixelColor.a);
     }`
 }
 

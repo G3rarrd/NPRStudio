@@ -86,14 +86,14 @@ class ShaderLuminanceQuantization implements Shader {
     }
 
     void main() {
-        vec3 color = texture(u_image, v_texCoord).rgb;
-        vec3 hsvColor = rgb2hsv(color);
+        vec4 color = texture(u_image, v_texCoord);
+        vec3 hsvColor = rgb2hsv(color.rgb);
 
         float newLuminance = luminanceQuantization(hsvColor.b);
         vec3 newHSV = vec3(vec2(hsvColor.rg), newLuminance);
 
         vec3 newColor = hsv2rgb(newHSV);
-        outColor0 = vec4(newColor, 1.0);
+        outColor0 = vec4(newColor, color.a);
     }
     `;
 }

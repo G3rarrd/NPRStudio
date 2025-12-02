@@ -64,7 +64,7 @@ class ShaderEmboss implements Shader{
 
     void main() {
         vec2 onePixel = vec2(1) / vec2(textureSize(u_image, 0));
-
+        float alphaColor = texture(u_image, v_texCoord).a;
         vec4 colorSum =     
         texture(u_image, v_texCoord + onePixel * vec2(-1, -1)) * u_kernel[0] + 
         texture(u_image, v_texCoord + onePixel * vec2(0, -1)) * u_kernel[1] + 
@@ -81,7 +81,7 @@ class ShaderEmboss implements Shader{
             color /= u_kernel_weight;
         }
 
-        outColor0 = vec4(color, 1.0);
+        outColor0 = vec4(color, alphaColor);
     }
     `
 

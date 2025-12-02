@@ -64,7 +64,7 @@ class ShaderBinaryThreshold implements Shader {
 
         if (u_threshold <= average) mask = 1.0;
         
-        outColor0 = vec4(vec3(mask), 1.0);
+        outColor0 = vec4(vec3(mask), color.a);
     }`
 }
 

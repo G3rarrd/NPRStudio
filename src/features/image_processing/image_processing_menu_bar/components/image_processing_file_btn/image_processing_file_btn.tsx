@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import useUpload from "../../../../../hooks/useUpload";
 
 
@@ -6,11 +6,13 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import baseStyles from '../image_processing_menu_btns_base.module.css';
 import { useDropdownExit } from "../../hooks/useDropdownExit";
 import useExport from "./hooks/useExport";
+import { ImageProcessingContext } from "../../../components/image_processing_context/image_processing_provider";
 // import styles from "./image_processing_file_btn.module.css";
 const ImageProcessingFileBtn = () => {
     const dropdownRef = useRef<HTMLDivElement | null>(null);
     const fileRef = useRef<HTMLInputElement | null>(null)
     const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+    const {sliderMap} = useContext(ImageProcessingContext);
 
     useHotkeys('ctrl+o', event =>{
         event.preventDefault();
@@ -18,7 +20,10 @@ const ImageProcessingFileBtn = () => {
     })
 
     function handleDropdownClick () {
-        setOpenDropdown(prev => !prev);
+        const sliderCount : number =  Object.entries(sliderMap).length;
+        if (sliderCount < 1) {
+            setOpenDropdown(prev => !prev);
+        }
     }
 
     function handleOpen() :void {

@@ -5,7 +5,7 @@ import ShaderGrayScale from "../nonCompositeTextures/shaderGrayscale";
 
 import CompositeShaderETFEigenvector from "./compositeShaderEigenvector";
 import WebGLShaderPass from "../webGLShaderPass";
-import ShaderAnisotropicKuwaharaPass from "../nonCompositeTextures/SHADERAnisotropicKuwaharaPass";
+import shaderAnisotropicKuwaharaPass from "../nonCompositeTextures/shaderAnisotropicKuwaharaPass";
 
 class CompositeShaderAnisotropicKuwahara{
     private readonly wgl : WebGLCore;
@@ -14,7 +14,7 @@ class CompositeShaderAnisotropicKuwahara{
     // Shaders (Composite and Non-Composite)
     public grayscale : ShaderGrayScale;
     public eigenvector : CompositeShaderETFEigenvector;
-    public anisotropicKuwahara : ShaderAnisotropicKuwaharaPass;
+    public anisotropicKuwahara : shaderAnisotropicKuwaharaPass;
 
     // Uniform Values
     private sigma : number = 1.6;
@@ -31,7 +31,7 @@ class CompositeShaderAnisotropicKuwahara{
         
         this.grayscale = new ShaderGrayScale(this.wgl);
         this.eigenvector = new CompositeShaderETFEigenvector(this.wgl);
-        this.anisotropicKuwahara = new ShaderAnisotropicKuwaharaPass(this.wgl);
+        this.anisotropicKuwahara = new shaderAnisotropicKuwaharaPass(this.wgl);
     }
 
     public setUniformValues (

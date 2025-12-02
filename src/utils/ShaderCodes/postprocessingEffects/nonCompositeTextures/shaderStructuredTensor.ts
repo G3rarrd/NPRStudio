@@ -78,7 +78,8 @@ class ShaderStructuredTensor implements Shader {
         float yy = dot(colorSumY.rgb, colorSumY.rgb);
 
         // Output structured Tensor
-        outColor0 = vec4(xx, yy, xy, 1.0);
+        float alphaColor = texture(u_image, v_texCoord).a;
+        outColor0 = vec4(xx, yy, xy, alphaColor);
     }`;
 }
 

@@ -67,10 +67,11 @@ class ShaderXDoGThreshold implements Shader {
     }
 
     void main() {
-        float dogValue = texture(u_dog, v_texCoord).r;
+        vec4 color = texture(u_dog, v_texCoord);
+        float dogValue = color.r;
         float result = computeXDoG(dogValue, u_epsilon, u_phi);
         result = clamp(result, 0.0, 1.0);  // Ensure valid range
-        outColor = vec4(vec3(result), 1.0);
+        outColor = vec4(vec3(result), color.a);
     }`
 }
 

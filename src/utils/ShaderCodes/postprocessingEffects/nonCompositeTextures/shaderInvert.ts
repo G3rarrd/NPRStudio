@@ -45,7 +45,7 @@ class ShaderInvert implements Shader {
         void main() {
             vec4 color = texture(u_image, v_texCoord);
             vec3 invert = vec3(1.0) - color.rgb;
-            outColor0 = vec4(invert, 1.0);
+            outColor0 = vec4(invert, color.a);
         }`
 
 }

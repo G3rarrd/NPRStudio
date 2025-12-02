@@ -50,7 +50,7 @@ class ShaderSubtract implements Shader {
 
             vec3 subtract = vec3(color1) - vec3(color2) ;
 
-            outColor = vec4(subtract, 1.0);
+            outColor = vec4(subtract, color1.a);
         }`
 }
 

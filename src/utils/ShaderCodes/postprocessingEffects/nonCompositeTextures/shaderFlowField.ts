@@ -111,8 +111,9 @@ class ShaderFlowField implements Shader {
 
         grad = getPerpendicularVec(grad);
 
-        magnitude = vec4(vec3(mag), 1.0);
-        x_y_direction = vec4(grad.x, grad.y, 1.0, 1.0);
+        float alphaColor = texture(u_luminance, v_texCoord).a;
+        magnitude = vec4(vec3(mag), alphaColor);
+        x_y_direction = vec4(grad.x, grad.y, 1.0, alphaColor);
     }`;
 }
 

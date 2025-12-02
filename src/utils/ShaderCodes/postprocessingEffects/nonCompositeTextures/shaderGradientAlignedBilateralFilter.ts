@@ -134,8 +134,8 @@ class ShaderGradientAlignedBilateral implements Shader {
             sum += sampleColor * weight;
             total += weight;
         }
-        
-        outColor = vec4(sum / total, 1.0);
+        float alphaColor = texture(u_image, v_texCoord).a;
+        outColor = vec4(sum / total, alphaColor);
     }`;
 }
 

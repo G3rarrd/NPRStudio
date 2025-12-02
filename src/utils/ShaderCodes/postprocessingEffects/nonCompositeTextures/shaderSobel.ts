@@ -100,8 +100,8 @@ class ShaderSobel implements Shader{
                                     (colorSumY.rgb * colorSumY.rgb));
 
             vec3 normalized = magnitude / sqrt(2.0); // Max gradient magnitude is sqrt(2.0) for normalized kernels
-
-            outColor0 = vec4(normalized, 1.0);
+            float alphaColor = texture(u_image, v_texCoord).a;
+            outColor0 = vec4(normalized, alphaColor);
         }`
 }
 

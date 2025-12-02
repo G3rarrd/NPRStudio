@@ -159,7 +159,8 @@ class ShaderETFSmoothingPass implements Shader {
         
         void main() {
             vec2 newVec = computeNewVector();
-            x_y_vector = vec4(newVec.x, newVec.y, 1.0, 1.0);
+            float alphaColor = texture(u_magnitude, v_texCoord).a;
+            x_y_vector = vec4(newVec.x, newVec.y, 1.0, alphaColor);
 
         }`;
 }

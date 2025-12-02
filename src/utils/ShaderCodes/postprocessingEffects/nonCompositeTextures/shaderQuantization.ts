@@ -71,9 +71,9 @@ class ShaderQuantization implements Shader {
     }
 
     void main() {
-        vec3 color = texture(u_image, v_texCoord).rgb;
-        vec3 newColor = quantization(color);
-        outColor0 = vec4(newColor, 1.0);
+        vec4 color = texture(u_image, v_texCoord);
+        vec3 newColor = quantization(color.rgb);
+        outColor0 = vec4(newColor, color.a);
     }`;
 }
 

@@ -19,6 +19,7 @@ function ImageProcessingFilterControlPanel () {
     }
 
     const handleClose =(() => {
+        
         if (!rendererRef || !rendererRef.current) return;
         
         setOpenFilterControl(() => false);
@@ -28,6 +29,7 @@ function ImageProcessingFilterControlPanel () {
         renderer.currentTexture = renderer.holdCurrentTexture;
 
         renderer.renderScene();
+        setSliderMap({});
     })
 
     const handleApply = (() => {
@@ -40,12 +42,15 @@ function ImageProcessingFilterControlPanel () {
         renderer.historyStack.add(renderer.currentTexture, renderer.img.naturalWidth,  renderer.img.naturalHeight);
         
         renderer.holdCurrentTexture = renderer.historyStack.getUndoStackTop(); // A new texture is born
+        setSliderMap({});
     }) 
 
 
     useEffect (() => {
-        if (filterFuncRef.current) filterFuncRef.current(sliderMap);
-
+        const sliderMapCount : number = Object.entries(sliderMap).length; // prevents the filterFuncRef from triggering when sliderMap is no longer in use
+        if (filterFuncRef.current && sliderMapCount > 0){
+            filterFuncRef.current(sliderMap);
+        }    
     }, [sliderMap])
 
 

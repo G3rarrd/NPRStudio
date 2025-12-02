@@ -102,6 +102,7 @@ class ShaderStreamlineBilateral implements Shader {
         int halfSize = u_kernel_size / 2; // Half the kernel Size
         vec2 texelSize = vec2(1.0) / vec2(textureSize(u_image, 0));
         vec3 centerColor = texture(u_image, v_texCoord).rgb;
+        float alphaColor = texture(u_image, v_texCoord).a;
 
 
         // Forward Sum;
@@ -150,7 +151,7 @@ class ShaderStreamlineBilateral implements Shader {
 
         sum += centerColor * u_kernel[halfSize]; // exponential of zero is one (range weight will be 1 at the center);
         total += u_kernel[halfSize];
-        outColor = vec4(sum / total, 1.0);
+        outColor = vec4(sum / total, alphaColor);
     }`;
 }
 

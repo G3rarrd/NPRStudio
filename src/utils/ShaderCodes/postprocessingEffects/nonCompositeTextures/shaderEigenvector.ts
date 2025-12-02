@@ -68,7 +68,7 @@ class ShaderEigenvector implements Shader {
         : 0.0;
 
         anisotropy = vec4(A, A, A, 1.0);
-        flow_map = vec4(tangent.x, tangent.y, 1.0, 1.0); 
+        flow_map = vec4(tangent.x, tangent.y, 1.0, color.a); 
     }`;
 
 }

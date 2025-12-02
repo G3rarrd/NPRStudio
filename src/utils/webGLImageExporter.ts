@@ -27,9 +27,13 @@ class WebGLImageExporter {
         if (! ctx) throw new Error("2D context not available");
         ctx.putImageData(new ImageData(clampedPixels, width, height), 0, 0);
 
+        const parts = filename.split(".");
+        const ext = parts.pop()
+        
         const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
+        link.href = canvas.toDataURL(`image/${ext}`);
         link.download = filename;
+
         link.click();
 
         this.gl.deleteFramebuffer(framebuffer);

@@ -44,6 +44,6 @@ export const defaultValue : ImageProcessingContextProps = {
     glCanvasRef :  { current: null },
     rendererRef :  { current: null },
     filterFuncRef : {
-        current: (configs: Record<string, Slider>) => {},
+        current: () => {},
     } 
 }

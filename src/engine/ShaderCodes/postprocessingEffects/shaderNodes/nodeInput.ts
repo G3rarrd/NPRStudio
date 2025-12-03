@@ -1,5 +1,4 @@
 import Framebuffer from "../../../framebuffer_textures/framebuffer";
-import FramebufferPool from "../../../framebuffer_textures/framebufferPool";
 import DependencyResolver from "./dependencyResolver";
 import { ShaderNode } from "./shaderNode";
 import { InputSocket, OutputSocket } from "./socket";
@@ -25,7 +24,7 @@ export class NodeInput implements ShaderNode {
         return this.dependencyResolver.isResolved();
     }
 
-    public render (pool : FramebufferPool, textureWidth : number, textureHeight : number, inputTextures : WebGLTexture[]) : WebGLTexture | null {
+    public render () : WebGLTexture | null {
         this.outputSockets[0].data = this.startTexture;
         return this.outputSockets[0].data;
     }   

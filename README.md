@@ -9,6 +9,7 @@ NPR Studio is a WebGL-powered application that allows users to stylize images us
 - [Project Structure](#project-strcuture)
 - [Future Directions](#future-directions)
 - [Contributing](#contributing)
+
 # Features
 ### **Image Processing Stylizations**
 - **Composite Styles (multiple render pass)**:
@@ -39,7 +40,9 @@ NPR Studio is a WebGL-powered application that allows users to stylize images us
 ### **File Management**
 - Drag-and-drop image uploading
 - Export processed result as the initial uploaded format
+
 [back to top](#table-of-contents)
+
 # Tech Stack
 ### **Frontend**
 - **React** (State management and context provider)
@@ -51,6 +54,7 @@ NPR Studio is a WebGL-powered application that allows users to stylize images us
 ### **Build & Tooling**
 - **Vite**
 - **NPM**
+
 [back to top](#table-of-contents)
 
 # Gallery
@@ -65,6 +69,7 @@ NPR Studio is a WebGL-powered application that allows users to stylize images us
 | Original                                               | Coherent Line Drawing (CLD) Filter |
 | ------------------------------------------------------ | ---------------------------------- |
 | ![Alt text](README_assets/isagi-yoichi-determined-gaze-36ki6xys4lpihfj6.jpg) | ![Alt text](README_assets/isagi_cld.png)                 |
+
 # Getting Started
 ### **1. Clone the repository**
 
@@ -86,11 +91,18 @@ npm run dev
 ```powershell
 npm run build
 ```
-### **5. Preview production build**
+### **5. Preview Production 
+Install `serve` if you don’t have it
 
 ```powershell
-npm run preview
+npm install -g serve
 ```
+
+Then run to preview the application locally
+```PowerShell
+serve -s dist
+```
+
 [back to top](#table-of-contents)
 
 # Usage
@@ -110,7 +122,6 @@ npm run preview
 ### **5. Import / Export**
 - Click the **File** button in the menu bar and select **Export** to download the file or **Open** to load a new image 
 [back to top](#table-of-contents)
-
 # Project Structure
 ```powershell
 ├── App.css  
@@ -172,14 +183,18 @@ npm run preview
 │   ├── webGLImageExporter.ts
 │   └── webGLToneMapping.ts
 └── vite-env.d.ts
+
 ```
+
 [back to top](#table-of-contents)
 
 # Future Directions
 - Implementation of a node editor that allows the combination of multiple stylizations. Possible libraries include (Rete.js, React Flow, and LiteGraph.js)
 - Addition of other Non-Photorealistic Rendering Techniques
+
 [back to top](#table-of-contents)
 
 # Contributing
 Contributions are welcomed! Please feel free to submit pull requests, report bugs, or suggest new features.
+
 [back to top](#table-of-contents)

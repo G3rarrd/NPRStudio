@@ -17,16 +17,16 @@ class CompositeShaderGaussianBlur {
         this.wgl = wgl;
         
         // Pass 1
-        this.gBlurX = new ShaderGaussianBlurPass(wgl);
+        this.gBlurX = new ShaderGaussianBlurPass(this.wgl);
         this.gBlurX.direction = [1, 0];
 
         // Final Pass
-        this.gBlurY = new ShaderGaussianBlurPass(wgl);
+        this.gBlurY = new ShaderGaussianBlurPass(this.wgl);
         this.gBlurY.direction = [0, 1];
 
         this.outputTextureCount = this.gBlurY.outputTextureCount;
 
-        this.shaderPass = new WebGLShaderPass(wgl);
+        this.shaderPass = new WebGLShaderPass(this.wgl);
     }
 
     public setUniformValues (radius : number) {

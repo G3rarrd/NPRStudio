@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLRenderer from "../../../../../../utils/Scene/webGLRender";
+import WebGLRenderer from "../../../../../../engine/Scene/webGLRender";
+
 
 function useZoomOut () {
     const {rendererRef} = useContext(ImageProcessingContext); 

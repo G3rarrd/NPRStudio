@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
-import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
-import { NodeAnisotropicKuwahara } from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeAnisotropicKuwahara";
+import WebGLShaderGraph from "../../../../../../engine/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeAnisotropicKuwahara from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeAnisotropicKuwahara";
 
 
 function useAnisotropicKuwahara () {
@@ -18,7 +18,7 @@ function useAnisotropicKuwahara () {
 
         const renderer = rendererRef.current;
        
-        const graphPipeline : WebGLShaderGraph = new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
+        const graphPipeline : WebGLShaderGraph= new WebGLShaderGraph(renderer.holdCurrentTexture, renderer.pool);
         const inputNode : NodeInput  = graphPipeline.inputNode;
         const anisotropicKuwaharaNode : NodeAnisotropicKuwahara = new NodeAnisotropicKuwahara(graphPipeline.generateId(), renderer.pool, renderer.wgl);
 

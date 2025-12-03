@@ -9,7 +9,6 @@ function useUpload() {
         if(e.target.files && e.target.files.length > 0) {
             const file : File = e.target.files[0];
             fileNameRef.current = file.name;
-            console.log(file.name)
             const url = URL.createObjectURL(file);
             setSrc(url);    
         } 

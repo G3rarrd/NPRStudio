@@ -1,7 +1,7 @@
 import { createContext, useState, ReactNode, useRef} from 'react';
 import { ImageProcessingContextProps, defaultValue } from './image_processing_context';
-import WebGLRenderer from '../../../../utils/Scene/webGLRender';
-import { Slider } from '../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder';
+import WebGLRenderer from '../../../../engine/Scene/webGLRender';
+import { Slider } from '../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder';
 
 export const ImageProcessingContext : React.Context<ImageProcessingContextProps> = createContext<ImageProcessingContextProps>(defaultValue);
 

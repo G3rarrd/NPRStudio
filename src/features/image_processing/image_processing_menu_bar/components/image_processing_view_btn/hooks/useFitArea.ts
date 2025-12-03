@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from '../../../../components/image_processing_context/image_processing_provider';
-import WebGLRenderer from "../../../../../../utils/Scene/webGLRender";
-import { m3 } from "../../../../../../utils/math/webGLMatrix3";
+import WebGLRenderer from "../../../../../../engine/Scene/webGLRender";
+import { m3 } from "../../../../../../engine/math/webGLMatrix3";
+
 
 function useFitArea () {
     const {rendererRef} = useContext(ImageProcessingContext);

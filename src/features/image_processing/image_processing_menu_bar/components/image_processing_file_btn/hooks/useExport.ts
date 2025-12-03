@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLRenderer from "../../../../../../utils/Scene/webGLRender";
-import WebGLImageExporter from "../../../../../../utils/webGLImageExporter";
+import WebGLImageExporter from "../../../../../../engine/webGLImageExporter";
+import WebGLRenderer from "../../../../../../engine/Scene/webGLRender";
+
 
 function useExport (fileName : string) {
     const {rendererRef}= useContext(ImageProcessingContext);

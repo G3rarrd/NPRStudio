@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import WebGL2DCamera from "../../../../utils/Scene/webGL2DCamera";
 import { ImageProcessingContext } from "../../components/image_processing_context/image_processing_provider";
-import { m3 } from "../../../../utils/math/webGLMatrix3";
-import WebGLRenderer from "../../../../utils/Scene/webGLRender";
+import WebGL2DCamera from "../../../../engine/Scene/webGL2DCamera";
+import WebGLRenderer from "../../../../engine/Scene/webGLRender";
+import { m3 } from "../../../../engine/math/webGLMatrix3";
+
 
 const useWebGL2DScene = () => {
     const {glCanvasRef, src, rendererRef} = useContext(ImageProcessingContext);

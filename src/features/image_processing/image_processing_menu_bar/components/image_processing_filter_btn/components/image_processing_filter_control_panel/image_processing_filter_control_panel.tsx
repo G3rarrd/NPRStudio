@@ -3,7 +3,8 @@ import ImageProcessingRangeSliders from "../image_processing_filter_range_slider
 import { ImageProcessingContext } from "../../../../../components/image_processing_context/image_processing_provider";
 
 import styles from './image_processing_filter_control_panel.module.css'
-import SliderBuilder, { Slider } from "../../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder";
+import SliderBuilder, { Slider } from "../../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder";
+
 function ImageProcessingFilterControlPanel () {
     const {rendererRef, sliderMap, openFilterControl, setOpenFilterControl, setSliderMap, filterFuncRef, filterName} = useContext(ImageProcessingContext);
     

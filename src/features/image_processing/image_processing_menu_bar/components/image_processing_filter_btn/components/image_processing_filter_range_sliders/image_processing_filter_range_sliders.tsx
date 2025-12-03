@@ -1,6 +1,6 @@
+import { Slider } from '../../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder';
 import styles from './image_processing_filter_range_sliders.module.css';
 import React from 'react';
-import { Slider } from '../../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder';
 
 interface SliderActionProps {
     slider : Slider,

@@ -1,8 +1,10 @@
 import { useContext} from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
-import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
-import NodeInvert from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInvert";
+import WebGLShaderGraph from "../../../../../../engine/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeInvert from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeInvert";
+
+
 
 function useInvert() {
     const {rendererRef, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);

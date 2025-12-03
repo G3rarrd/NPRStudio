@@ -1,7 +1,7 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import ImageProcessingIndex from './features/image_processing/image_processing_index';
-import Home from './pages/homes';
+// import Home from './pages/homes';
 import { Studio } from './pages/studio';
 import NoPage from './pages/noPage';
 

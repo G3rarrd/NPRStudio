@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
-import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
-import { NodePixelize } from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodePixelize";
+import WebGLShaderGraph from "../../../../../../engine/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodePixelize from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodePixelize";
 
 function usePixelize () {
     const {rendererRef, setSliderMap: setSliderConfigs, setOpenFilterControl, filterFuncRef, setFilterName} = useContext(ImageProcessingContext);

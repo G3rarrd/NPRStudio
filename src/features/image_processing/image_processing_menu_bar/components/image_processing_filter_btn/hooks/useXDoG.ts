@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
-import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
-import NodeXDoG from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeXDoG";
+import WebGLShaderGraph from "../../../../../../engine/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeXDoG from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeXDoG";
 
 function useXDoG () {
     const {rendererRef, filterFuncRef, setSliderMap: setSliderConfigs, setOpenFilterControl, setFilterName} = useContext(ImageProcessingContext);

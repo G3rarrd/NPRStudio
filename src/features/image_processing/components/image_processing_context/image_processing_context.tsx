@@ -1,6 +1,5 @@
-
-import WebGLRenderer from "../../../../utils/Scene/webGLRender";
-import { Slider } from "../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder";
+import WebGLRenderer from "../../../../engine/Scene/webGLRender";
+import { Slider } from "../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/sliderBuilder";
 
 // type Dimensions = {width : number; height: number} | null;
 

@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { ImageProcessingContext } from "../../../../components/image_processing_context/image_processing_provider";
-import WebGLShaderGraph from "../../../../../../utils/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
-import NodeInput from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
-import NodeCoherentLineDrawing from "../../../../../../utils/ShaderCodes/postprocessingEffects/shaderNodes/nodeCoherentLineDrawing";
+import WebGLShaderGraph from "../../../../../../engine/ShaderCodes/postprocessingEffects/WebGLShaderGraph";
+import NodeInput from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeInput";
+import NodeCoherentLineDrawing from "../../../../../../engine/ShaderCodes/postprocessingEffects/shaderNodes/nodeCoherentLineDrawing";
+
 
 function useCoherentLineDrawing () {
     const {rendererRef,setOpenFilterControl, filterFuncRef, setSliderMap: setSliderConfigs, setFilterName} = useContext(ImageProcessingContext);

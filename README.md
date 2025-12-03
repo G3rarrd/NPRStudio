@@ -64,7 +64,7 @@ NPR Studio is a WebGL-powered application that allows users to stylize images us
 
 | Original                                               | Coherent Line Drawing (CLD) Filter |
 | ------------------------------------------------------ | ---------------------------------- |
-| ![Alt text](README_assets/isagi-yoichi-determined-gaze-36ki6xys4lpihfj6.jpg) | ![Alt text](README_assets\isagi_cld.png)                 |
+| ![Alt text](README_assets/isagi-yoichi-determined-gaze-36ki6xys4lpihfj6.jpg) | ![Alt text](README_assets/isagi_cld.png)                 |
 # Getting Started
 ### **1. Clone the repository**
 
